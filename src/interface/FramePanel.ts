@@ -5,7 +5,7 @@ export class FramePanel {
     private _content: string[] = []
     private _cursor = new CursorController()
     private _size = { vertical: 0, horizontal: 0 }
-    
+
     constructor(
         private _box: Box
     ) {
