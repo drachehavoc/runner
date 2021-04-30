@@ -45,7 +45,7 @@ export class Box {
         protected _end: TPoint | TBoxPointUpdate,
     ) {
         this._calculateValues()
-        std.on("resize", () => {
+        clearStack.add(() => {
             this._calculateValues()
             this._events.resize.forEach(evt => evt(this))
         })
