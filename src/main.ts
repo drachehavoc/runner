@@ -37,10 +37,9 @@ const log = new Frame(
     )
 )
 
-const information = new Frame(
-    "Information",
-    new Box(
-        () => sumPoints(activities.box.bottomLeft, point(0, 1)),
-        () => point(activities.box.size.x, Box.terminalSizeY)
-    )
-)
+// =============================================================================
+
+new FramePanel(new Box(
+    () => sumPoints(activities.box.topLeft, point(1, 1)),
+    () => sumPoints(activities.box.bottomRight, point(-1, -1))
+));
