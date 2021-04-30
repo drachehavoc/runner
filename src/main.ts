@@ -21,6 +21,14 @@ const activities = new Frame(
     )
 )
 
+const information = new Frame(
+    "Information",
+    new Box(
+        () => sumPoints(activities.box.bottomLeft, point(0, 1)),
+        () => point(activities.box.size.x, Box.terminalSizeY)
+    )
+)
+
 const log = new Frame(
     "Logs",
     new Box(
