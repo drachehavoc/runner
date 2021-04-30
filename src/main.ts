@@ -2,6 +2,8 @@ import "./runner/Init"
 import { Box } from "./interface/Box"
 import { Frame } from "./interface/Frame"
 import { point, sumPoints } from "./interface/Util"
+import { FramePanel } from "./interface/FramePanel"
+
 // =============================================================================
 
 import fs from "fs"
