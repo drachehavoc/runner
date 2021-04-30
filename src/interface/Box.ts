@@ -1,4 +1,5 @@
 import { clearStack } from "./clearStack";
+import { sumPoints } from "./Util";
 
 const std = process.stdout
 
