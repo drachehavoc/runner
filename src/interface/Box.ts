@@ -1,4 +1,4 @@
-import { point, sumPoints } from "./Util";
+import { clearStack } from "./clearStack";
 
 const std = process.stdout
 
