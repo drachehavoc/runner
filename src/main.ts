@@ -2,6 +2,14 @@ import "./runner/Init"
 import { Box } from "./interface/Box"
 import { Frame } from "./interface/Frame"
 import { point, sumPoints } from "./interface/Util"
+// =============================================================================
+
+import fs from "fs"
+import path from "path"
+const fileLocation = path.resolve(__dirname, '../\$tempDev/lorem.txt')
+const lorem = fs.readFileSync(fileLocation);
+
+// =============================================================================
 
 const activities = new Frame(
     "Activities",
