@@ -1,176 +1,138 @@
-import { Box } from "./Box";
-import { CursorController } from "./CursorController";
-import { FrameScrollbars } from "./FrameScrollbar";
-import { Theme } from "./Theme";
-import { point, sumPoints } from "./Util";
+// import { Box } from "./Box";
+// import { CursorController } from "./CursorController";
+// import { Theme } from "./Theme";
+// import { point, sumPoints } from "./Util";
 
-const FramesList: Frame[] = []
-let SelectedFrame: Frame;
+// const FramesList: Frame[] = []
 
-export class Frame {
-    static get current() {
-        return SelectedFrame
-    }
+// let SelectedFrame: Frame;
 
-    static selectStep(step: number) {
-        const currentIdx = FramesList.indexOf(SelectedFrame)
-        const nextIdx = currentIdx + step
-        const prevSelectedFrame = SelectedFrame;
-        const lastFrameListIdx = FramesList.length - 1
+// export class Frame {
+//     static getCurrent() {
+//         return SelectedFrame
+//     }
 
-        let nextSelectedFrame: Frame = FramesList[nextIdx];
+//     static selectStep(step: number) {
+//         const currentIdx = FramesList.indexOf(SelectedFrame)
+//         const nextIdx = currentIdx + step
+//         const prevSelectedFrame = SelectedFrame;
+//         const lastFrameListIdx = FramesList.length - 1
 
-        if (!nextSelectedFrame) {
-            if (nextIdx > lastFrameListIdx)
-                nextSelectedFrame = FramesList[0]
+//         let nextSelectedFrame: Frame = FramesList[nextIdx]
 
-            if (nextIdx < 0)
-                nextSelectedFrame = FramesList[lastFrameListIdx]
-        }
+//         if (!nextSelectedFrame) {
+//             if (nextIdx > lastFrameListIdx)
+//                 nextSelectedFrame = FramesList[0]
 
-        SelectedFrame = nextSelectedFrame
-        prevSelectedFrame.update()
-        nextSelectedFrame.update()
-    }
+//             if (nextIdx < 0)
+//                 nextSelectedFrame = FramesList[lastFrameListIdx]
+//         }
 
-    static selectNext() {
-        return Frame.selectStep(1)
-    }
+//         SelectedFrame = nextSelectedFrame
+//         prevSelectedFrame.update()
+//         nextSelectedFrame.update()
+//     }
 
-    static selectPrevious() {
-        return Frame.selectStep(-1)
-    }
+//     static selectNext() {
+//         return Frame.selectStep(1)
+//     }
 
-    // =========================================================================
+//     static selectPrevious() {
+//         return Frame.selectStep(-1)
+//     }
 
-    private _fixedScroll = false
+//     // =========================================================================
 
-    private _cursor = new CursorController()
+//     protected _cursor = new CursorController()
 
-    private _scrolls: { vertical: FrameScrollbars, horizontal: FrameScrollbars }
+//     constructor(
+//         protected _title: string,
+//         protected _box: Box,
+//     ) {
+//         if (!SelectedFrame)
+//             SelectedFrame = this
+//         FramesList.push(this)
+//         _box.on("resize", () => this.update())
+//         this.init()
+//     }
 
-    constructor(
-        private _title: string,
-        private _box: Box,
-    ) {
-        if (!SelectedFrame)
-            SelectedFrame = this
-        FramesList.push(this)
-        _box.on("resize", () => this.update())
-        this._scrolls = this._instantiateScrollbars()
-        this.update()
-    }
+//     init() {
+//         this.update()
+//     }
 
-    private _getTheme() {
-        return SelectedFrame === this ? Theme["frame-focused"] : Theme["frame"]
-    }
+//     protected _getTheme() {
+//         return SelectedFrame === this ? Theme["frame-focused"] : Theme["frame"]
+//     }
 
-    private _instantiateScrollbars() {
-        const _boxScrollVertical = new Box(
-            () => sumPoints(this._box.topRight, point(0, 1)),
-            () => sumPoints(this._box.bottomRight, point(0, -1))
-        )
+//     protected _drawFrame() {
+//         const cursor = this._cursor
+//         const box = this._box
+//         const theme = this._getTheme()
 
-        const _boxScrollHorizontal = new Box(
-            () => sumPoints(this._box.bottomLeft, point(1, 0)),
-            () => sumPoints(this._box.bottomRight, point(-1, 0))
-        )
+//         // frame colors
+//         cursor
+//             .color(theme.color.border.foreground)
+//             .background(theme.color.border.background)
 
-        const vertical = new FrameScrollbars(_boxScrollVertical, 'vertical')
-        const horizontal = new FrameScrollbars(_boxScrollHorizontal, 'horizontal')
+//         // corners
 
-        return { vertical, horizontal }
-    }
+//         cursor
+//             .move(box.topLeft)
+//             .write("┌")
 
-    private _draw() {
-        const cursor = this._cursor
-        const box = this._box
-        const theme = this._getTheme()
+//             .move(box.topRight)
+//             .write("┐")
 
-        // frame colors
-        cursor
-            .color(theme.color.border.foreground)
-            .background(theme.color.border.background)
+//             .move(box.bottomLeft)
+//             .write("└")
 
-        // corners
+//             .move(box.bottomRight)
+//             .write("┘")
 
-        cursor
-            .move(box.topLeft)
-            .write("┌")
+//         // horizontal bars
 
-            .move(box.topRight)
-            .write("┐")
+//         const sizeX = box.size.x - 1
 
-            .move(box.bottomLeft)
-            .write("└")
+//         const horizBar = '─'.repeat(sizeX >= 1 ? sizeX : 1);
 
-            .move(box.bottomRight)
-            .write("┘")
+//         cursor
+//             .move(box.topLeft, point(1, 0))
+//             .write(horizBar)
+//             .move(box.bottomLeft, point(1, 0))
+//             .write(horizBar)
 
-        // horizontal bars
+//         // vertival bars
 
-        const sizeX = box.size.x - 1
+//         for (let top = box.size.y; top-- > 1;) {
+//             cursor
+//                 .move(box.topLeft, point(0, top))
+//                 .write("│")
+//                 .move(box.topRight, point(0, top))
+//                 .write("│")
+//         }
 
-        const horizBar = '─'.repeat(sizeX >= 1 ? sizeX : 1);
+//         // title
 
-        cursor
-            .move(box.topLeft, point(1, 0))
-            .write(horizBar)
-            .move(box.bottomLeft, point(1, 0))
-            .write(horizBar)
+//         const formatedTitle = this._title.substr(0, box.size.x - 3)
 
-        // vertival bars
+//         cursor
+//             .move(box.topLeft, point(1, 0))
+//             .italic()
+//             .color(theme.color.title.foreground)
+//             .background(theme.color.title.background)
+//             .write(` ${formatedTitle}${formatedTitle != this._title ? '…' : ' '}`)
+//             .reset();
 
-        for (let top = box.size.y; top-- > 1;) {
-            cursor
-                .move(box.topLeft, point(0, top))
-                .write("│")
-                .move(box.topRight, point(0, top))
-                .write("│")
-        }
+//         // 
+//         cursor
+//             .reset()
+//     }
 
-        // title
+//     update() {
+//         this._drawFrame()
+//     }
 
-        const formatedTitle = this._title.substr(0, box.size.x - 3)
-
-        cursor
-            .move(box.topLeft, point(1, 0))
-            .italic()
-            .color(theme.color.title.foreground)
-            .background(theme.color.title.background)
-            .write(` ${formatedTitle}${formatedTitle != this._title ? '…' : ' '}`)
-            .reset();
-
-        // 
-        cursor
-            .reset()
-    }
-
-    toggleFixedBar() {
-        this._fixedScroll = !this._fixedScroll
-        this._scrolls.vertical.setBarFixed(this._fixedScroll)
-        this._scrolls.horizontal.setBarFixed(this._fixedScroll)
-    }
-
-    update() {
-        const showScrollbars = this.showScrollbars
-        const theme = this._getTheme()
-        this._draw()
-        if (showScrollbars.vertical)
-            this._scrolls.vertical.update(null, theme.color.border.foreground, theme.color.border.background)
-
-        if (showScrollbars.horizontal)
-            this._scrolls.horizontal.update(null, theme.color.border.foreground, theme.color.border.background)
-    }
-
-    get box() {
-        return this._box
-    }
-
-    get showScrollbars() {
-        return {
-            vertical: false,
-            horizontal: false
-        }
-    }
-}
+//     getBox() {
+//         return this._box
+//     }
+// }
