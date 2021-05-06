@@ -80,9 +80,11 @@ export class TerminalContentBox {
     scrollDown() {
         this._position.y++
         this._events.fire('verticalScrollChange', this)
-        const s = this._height - this._box.size.y - 1
-        if (this._position.y > s)
+        const s = Math.max(this._height - this._box.size.y - 1, 0)
+        if (this._position.y > s) {
+
             return this._position.y = s
+        }
         this._draw()
     }
 
@@ -104,7 +106,7 @@ export class TerminalContentBox {
 
     scrollRight() {
         this._position.x++
-        const s = this._width - this._box.size.x - 1
+        const s = Math.max(this._width - this._box.size.x - 1, 0)
         this._events.fire('horizontalScrollChange', this)
         if (this._position.x > s)
             return this._position.x = s

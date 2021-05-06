@@ -7,9 +7,13 @@ import { TerminalHorizontalScroll, TerminalVerticalScroll } from "./TerminalScro
 import { Theme } from "./Theme";
 
 const TerminalWindowList: TerminalWindow[] = []
+
 let TerminalWindowSelected: TerminalWindow
 
 export class TerminalWindow {
+    static get selected() {
+        return TerminalWindowSelected
+    }
 
     static selectStep(step: number) {
         const TerminalWindowPrev = TerminalWindowSelected
@@ -110,16 +114,16 @@ export class TerminalWindow {
         })
 
         content.on("addContent", () => {
-            this._scrolls.vertical.setVisible(content.getOverflowX())
+            this._scrolls.vertical.setVisible(content.getOverflowY())
             this._scrolls.horizontal.setVisible(content.getOverflowX())
         })
 
         content.on("update", () => {
-            this._scrolls.vertical.setVisible(content.getOverflowX())
+            this._scrolls.vertical.setVisible(content.getOverflowY())
             this._scrolls.horizontal.setVisible(content.getOverflowX())
         })
 
-        content.add(this._isSlected() ? "SIM" : "NÃO")
+        content.update()
 
         return content
     }

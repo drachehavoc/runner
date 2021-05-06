@@ -4,8 +4,6 @@ import { TerminalContext } from "./TerminalContext";
 import { Theme, TThemeFrame } from "./Theme";
 
 export class TerminalFrame {
-    // protected _themeFrame = Theme.frame
-
     protected _selected = false
 
     constructor(
@@ -84,10 +82,6 @@ export class TerminalFrame {
         cursor
             .reset()
     }
-
-    // setTheme(themeFrame: TThemeFrame) {
-    //     this._themeFrame = themeFrame
-    // }
 
     setSelected(isSelected: boolean) {
         this._selected = isSelected

@@ -12,23 +12,23 @@ const lorem = fs.readFileSync(fileLocation).toString();
 
 // =============================================================================
 
-const winA = new TerminalWindow("win - a", new TerminalBox(
+const winProcesses = new TerminalWindow("Processes", new TerminalBox(
     pointZero(),
-    TerminalBox.fnSize(point(20, 10))
+    TerminalBox.fnSize(point(30, 10))
 ))
 
-const winZ = new TerminalWindow("win - z", new TerminalBox(
-    () => sumPoints(winA.getBox().bottomLeft, point(0, 1)),
-    () => point(winA.getBox().size.x, TerminalContext.getHeight())
+const winProcessInformation = new TerminalWindow("Information", new TerminalBox(
+    () => sumPoints(winProcesses.getBox().bottomLeft, point(0, 1)),
+    () => point(winProcesses.getBox().size.x, TerminalContext.getHeight())
 ))
 
-winA.getContent().add(lorem)
 
-const winB = new TerminalWindow("win - b", new TerminalBox(
-    () => sumPoints(winA.getBox().topRight, point(1, 0)),
+const winLog = new TerminalWindow("Log", new TerminalBox(
+    () => sumPoints(winProcesses.getBox().topRight, point(1, 0)),
     TerminalBox.fnMaxScreen()
 ))
 
+winLog.getContent().add(lorem)
 
 // =============================================================================
 
@@ -47,19 +47,19 @@ stdin.on("keypress", (c, key) => {
     }
 
     if (key.name == "tab")
-        TerminalWindow[key.shift ? "previous" : "next"]()
+        return TerminalWindow[key.shift ? "previous" : "next"]()
 
-    // if (key.name == "left")
-    //     return contentBox.scrollLeft()
+    if (key.name == "left")
+        return TerminalWindow.selected.getContent().scrollLeft()
 
-    // if (key.name == "right")
-    //     return contentBox.scrollRight()
+    if (key.name == "right")
+        return TerminalWindow.selected.getContent().scrollRight()
 
-    // if (key.name == "up")
-    //     return contentBox.scrollUp()
+    if (key.name == "up")
+        return TerminalWindow.selected.getContent().scrollUp()
 
-    // if (key.name == "down")
-    //     return contentBox.scrollDown()
+    if (key.name == "down")
+        return TerminalWindow.selected.getContent().scrollDown()
 })
 
 // =============================================================================
