@@ -4,27 +4,32 @@ import { TerminalContext } from "./TerminalContext";
 import { Theme, TThemeFrame } from "./Theme";
 
 export class TerminalFrame {
-    protected _themeFrame = Theme.frame
+    // protected _themeFrame = Theme.frame
+
+    protected _selected = false
 
     constructor(
-        private _box: TerminalBox,
-        private _title: string
+        private _title: string,
+        private _box: TerminalBox
     ) {
         this._init()
     }
 
     private _init() {
-        this._drawFrame()
+        // this._drawFrame()
     }
 
     protected _drawFrame() {
         const cursor = TerminalContext
         const box = this._box
+        const theme = this._selected 
+            ? Theme.frame.selected
+            : Theme.frame.blurred 
 
         // frame colors
         cursor
-            .color(this._themeFrame.color.border.foreground)
-            .background(this._themeFrame.color.border.background)
+            .color(theme.color.border.foreground)
+            .background(theme.color.border.background)
 
         // corners
 
@@ -70,8 +75,8 @@ export class TerminalFrame {
         cursor
             .move(box.topLeft, point(1, 0))
             .italic()
-            .color(this._themeFrame.color.title.foreground)
-            .background(this._themeFrame.color.title.background)
+            .color(theme.color.title.foreground)
+            .background(theme.color.title.background)
             .write(` ${formatedTitle}${formatedTitle != this._title ? '…' : ' '}`)
             .reset();
 
@@ -80,7 +85,15 @@ export class TerminalFrame {
             .reset()
     }
 
-    setTheme(themeFrame: TThemeFrame) {
-        this._themeFrame = themeFrame
+    // setTheme(themeFrame: TThemeFrame) {
+    //     this._themeFrame = themeFrame
+    // }
+
+    setSelected(isSelected: boolean) {
+        this._selected = isSelected
+    }
+
+    update() {
+        this._drawFrame()
     }
 }

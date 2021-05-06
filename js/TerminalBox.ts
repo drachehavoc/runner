@@ -1,11 +1,26 @@
-import { sumPoints, TPoint } from "./point";
+import { point, sumPoints, TPoint } from "./point";
 import { TerminalContext } from "./TerminalContext";
 import { EventsHandler } from "./EventsHandler";
 
-type TBoxPointUpdate = (self: TerminalBox) => TPoint
+type TBoxPointStartFunctionUpdate = () => TPoint
+type TBoxPointEndFunctionUpdate = (startPoint: TPoint) => TPoint
 type TBoxOnResize = (self: TerminalBox) => any
 
 export class TerminalBox {
+
+    static fnMaxScreen(...points: TPoint[]) {
+        return () => sumPoints(
+            point(TerminalContext.getWidth(), TerminalContext.getHeight()),
+            ...points
+        )
+    }
+
+    static fnSize(point: TPoint, ...points: TPoint[]) {
+        return (startPoint: TPoint) => sumPoints(startPoint, point, ...points)
+    }
+
+    // =========================================================================
+
     protected _events = new EventsHandler({
         resize: [] as TBoxOnResize[]
     })
@@ -17,8 +32,8 @@ export class TerminalBox {
     } = {}
 
     constructor(
-        protected _start: TPoint | TBoxPointUpdate,
-        protected _end: TPoint | TBoxPointUpdate,
+        protected _start: TPoint | TBoxPointStartFunctionUpdate,
+        protected _end: TPoint | TBoxPointEndFunctionUpdate,
     ) {
         this._init()
     }
@@ -36,11 +51,11 @@ export class TerminalBox {
 
     protected _calculateValues() {
         const start = this._start instanceof Function
-            ? this._start(this)
+            ? this._start()
             : this._start
 
         const end = this._end instanceof Function
-            ? this._end(this)
+            ? this._end(start)
             : this._end
 
         const size = {

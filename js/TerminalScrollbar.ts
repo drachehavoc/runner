@@ -1,5 +1,6 @@
 import { point, sumPoints, TPoint } from "./point";
 import { TerminalContext } from "./TerminalContext";
+import { Theme } from "./Theme";
 
 export class TerminalVerticalScroll {
     protected _bars = { clear: "│", normal: "┃", fixed: "║" }
@@ -7,6 +8,10 @@ export class TerminalVerticalScroll {
     protected _percent = 0
 
     protected _prevPosition?: TPoint
+
+    protected _visible = false
+
+    protected _selected = false
 
     constructor(
         protected _start: TPoint | ((...n: any[]) => TPoint),
@@ -16,7 +21,7 @@ export class TerminalVerticalScroll {
     }
 
     protected _init() {
-        this._draw()
+        // this._draw()
     }
 
     protected _getSize() {
@@ -39,20 +44,47 @@ export class TerminalVerticalScroll {
         if (!this._prevPosition)
             return
 
+        const theme = this._getTheme()
+
         TerminalContext
             .move(this._prevPosition)
+            .color(theme.color.foreground)
+            .background(theme.color.background)
             .write(this._bars.clear)
+            .reset()
+    }
+
+    protected _getTheme() {
+        return this._selected ? Theme.scroll.selected : Theme.scroll.blurred
     }
 
     protected _draw() {
+        if (!this._visible)
+            return
+
+        const theme = this._getTheme()
+
         TerminalContext
             .move(this._prevPosition = this._getCurrentPositionPoint())
+            .color(theme.color.foreground)
+            .background(theme.color.background)
             .write(this._bars.normal)
+            .reset()
+    }
+
+    setSelected(isSelected: boolean) {
+        this._selected = isSelected
+    }
+
+    setVisible(visible: boolean) {
+        this._visible = visible
+        this.update()
     }
 
     update(percent?: number) {
         if (percent)
             this._percent = Math.min(Math.max(percent, 0), 1)
+
         this._clear()
         this._draw()
     }

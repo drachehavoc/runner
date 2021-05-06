@@ -1,13 +1,19 @@
-import { EventsHandler } from "./EventsHandler";
-import { point } from "./point";
-import { TerminalBox } from "./TerminalBox";
-import { TerminalContext } from "./TerminalContext";
+import { EventsHandler } from "./EventsHandler"
+import { point } from "./point"
+import { TerminalBox } from "./TerminalBox"
+import { TerminalContext } from "./TerminalContext"
 
-type TPanelOnAddContent = (self: TerminalContentBox) => any
+type TOnAddContent = (self: TerminalContentBox) => any
+type TOnUpdate = (self: TerminalContentBox) => any
+type TOnVerticalScrollChange = (self: TerminalContentBox) => any
+type TOnHorizontalScrollChange = (self: TerminalContentBox) => any
 
 export class TerminalContentBox {
     protected _events = new EventsHandler({
-        addContent: [] as TPanelOnAddContent[]
+        addContent: [] as TOnAddContent[],
+        update: [] as TOnUpdate[],
+        verticalScrollChange: [] as TOnVerticalScrollChange[],
+        horizontalScrollChange: [] as TOnHorizontalScrollChange[],
     })
 
     protected _width = 0
@@ -21,6 +27,10 @@ export class TerminalContentBox {
     constructor(
         protected _box: TerminalBox
     ) {
+        this._init()
+    }
+
+    protected _init() {
         //
     }
 
@@ -37,6 +47,24 @@ export class TerminalContentBox {
         }
     }
 
+    getOverflowX() {
+        return this._width > this._box.size.x
+    }
+
+    getOverflowY() {
+        return this._height > this._box.size.y
+    }
+
+    getPositionPercentX() {
+        return this._position.x / (this._width - this._box.size.x)
+    }
+
+    getPositionPercentY() {
+        return this._position.y / (this._height - this._box.size.y)
+    }
+
+    on = this._events.on.bind(this._events)
+
     add(content: string) {
         const lines = content.split(/\n/gm)
         this._height += lines.length
@@ -51,14 +79,16 @@ export class TerminalContentBox {
 
     scrollDown() {
         this._position.y++
+        this._events.fire('verticalScrollChange', this)
         const s = this._height - this._box.size.y - 1
-        if (this._position.y >  s)
+        if (this._position.y > s)
             return this._position.y = s
         this._draw()
     }
 
     scrollUp() {
         this._position.y--
+        this._events.fire('verticalScrollChange', this)
         if (this._position.y < 0)
             return this._position.y = 0
         this._draw()
@@ -66,6 +96,7 @@ export class TerminalContentBox {
 
     scrollLeft() {
         this._position.x--
+        this._events.fire('horizontalScrollChange', this)
         if (this._position.x < 0)
             return this._position.x = 0
         this._draw()
@@ -74,8 +105,14 @@ export class TerminalContentBox {
     scrollRight() {
         this._position.x++
         const s = this._width - this._box.size.x - 1
-        if (this._position.x >  s)
+        this._events.fire('horizontalScrollChange', this)
+        if (this._position.x > s)
             return this._position.x = s
         this._draw()
+    }
+
+    update() {
+        this._draw()
+        this._events.fire("update", this)
     }
 }
