@@ -7,8 +7,6 @@ export class TerminalVerticalScroll {
 
     protected _percent = 0
 
-    protected _prevPosition?: TPoint
-
     protected _visible = false
 
     protected _selected = false
@@ -41,13 +39,9 @@ export class TerminalVerticalScroll {
     }
 
     protected _clear() {
-        if (!this._prevPosition)
-            return
-
         const theme = this._getTheme()
-
         TerminalContext
-            .move(this._prevPosition)
+            .move(this._getCurrentPositionPoint())
             .color(theme.color.foreground)
             .background(theme.color.background)
             .write(this._bars.clear)
@@ -65,7 +59,7 @@ export class TerminalVerticalScroll {
         const theme = this._getTheme()
 
         TerminalContext
-            .move(this._prevPosition = this._getCurrentPositionPoint())
+            .move(this._getCurrentPositionPoint())
             .color(theme.color.foreground)
             .background(theme.color.background)
             .write(this._bars.normal)
@@ -82,10 +76,9 @@ export class TerminalVerticalScroll {
     }
 
     update(percent?: number) {
+        this._clear()
         if (percent)
             this._percent = Math.min(Math.max(percent, 0), 1)
-
-        this._clear()
         this._draw()
     }
 }

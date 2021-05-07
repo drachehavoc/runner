@@ -22,13 +22,19 @@ const winProcessInformation = new TerminalWindow("Information", new TerminalBox(
     () => point(winProcesses.getBox().size.x, TerminalContext.getHeight())
 ))
 
-
 const winLog = new TerminalWindow("Log", new TerminalBox(
     () => sumPoints(winProcesses.getBox().topRight, point(1, 0)),
     TerminalBox.fnMaxScreen()
 ))
 
 winLog.getContent().add(lorem)
+
+// =============================================================================
+
+TerminalContext.on('resize', () => {
+    TerminalContext.clear()
+    TerminalWindow.updateAll()
+})
 
 // =============================================================================
 
@@ -41,7 +47,7 @@ stdin.setRawMode(true)
 stdin.on("keypress", (c, key) => {
     if (key.name == 'c' && key.ctrl) {
         TerminalContext.unhide()
-        TerminalContext.clearScreen()
+        TerminalContext.clear()
         TerminalContext.move(pointZero())
         process.exit()
     }

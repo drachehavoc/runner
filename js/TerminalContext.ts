@@ -89,14 +89,10 @@ export class TerminalContext {
         process.stdout.write(content)
         return TerminalContext
     }
-
+    
     static clear() {
-        process.stdout.clearScreenDown()
+        TerminalContext.escCode("2", "J")
         _events.fire('clear')
-    }
-
-    static clearScreen() {
-        return TerminalContext.escCode("2", "J")
     }
 
     static hide() {

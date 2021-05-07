@@ -15,6 +15,10 @@ export class TerminalWindow {
         return TerminalWindowSelected
     }
 
+    static updateAll() {
+        TerminalWindowList.forEach(tw => tw.update())
+    }
+
     static selectStep(step: number) {
         const TerminalWindowPrev = TerminalWindowSelected
 
@@ -119,6 +123,9 @@ export class TerminalWindow {
         })
 
         content.on("update", () => {
+            const selected = this._isSlected()
+            this._scrolls.vertical.setSelected(selected)
+            this._scrolls.horizontal.setSelected(selected)
             this._scrolls.vertical.setVisible(content.getOverflowY())
             this._scrolls.horizontal.setVisible(content.getOverflowX())
         })
@@ -128,6 +135,7 @@ export class TerminalWindow {
         return content
     }
 
+    delme = 0
     getBox() {
         return this._box
     }
@@ -149,17 +157,10 @@ export class TerminalWindow {
     }
 
     update() {
-        const selected = this._isSlected()
         const frame = this.getFrame()
-        const scrollX = this.getScrollX()
-        const scrollY = this.getScrollY()
-        
-        frame.setSelected(selected)
-        scrollX.setSelected(selected)
-        scrollY.setSelected(selected)
-        
+        const content = this.getContent()
+        frame.setSelected(this._isSlected())
         frame.update()
-        scrollX.update()
-        scrollY.update()
+        content.update()
     }
 }
