@@ -139,7 +139,6 @@ export class TerminalWindow {
         return content
     }
 
-    delme = 0
     getBox() {
         return this._box
     }
