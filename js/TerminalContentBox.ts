@@ -82,8 +82,8 @@ export class TerminalContentBox {
         this._events.fire('verticalScrollChange', this)
         const s = Math.max(this._height - this._box.size.y - 1, 0)
         if (this._position.y > s) {
-
-            return this._position.y = s
+            this._position.y = s
+            return
         }
         this._draw()
     }
@@ -91,16 +91,20 @@ export class TerminalContentBox {
     scrollUp() {
         this._position.y--
         this._events.fire('verticalScrollChange', this)
-        if (this._position.y < 0)
-            return this._position.y = 0
+        if (this._position.y < 0) {
+            this._position.y = 0
+            return
+        }
         this._draw()
     }
 
     scrollLeft() {
         this._position.x--
         this._events.fire('horizontalScrollChange', this)
-        if (this._position.x < 0)
-            return this._position.x = 0
+        if (this._position.x < 0) {
+            this._position.x = 0
+            return
+        }
         this._draw()
     }
 
@@ -108,8 +112,10 @@ export class TerminalContentBox {
         this._position.x++
         const s = Math.max(this._width - this._box.size.x - 1, 0)
         this._events.fire('horizontalScrollChange', this)
-        if (this._position.x > s)
-            return this._position.x = s
+        if (this._position.x > s) {
+            this._position.x = s
+            return
+        }
         this._draw()
     }
 

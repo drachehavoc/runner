@@ -103,11 +103,15 @@ export class TerminalWindow {
         return { vertical, horizontal }
     }
 
-    protected _createContent() {
-        const content = new TerminalContentBox(new TerminalBox(
+    protected _createContentRaw(): TerminalContentBox {
+        return new TerminalContentBox(new TerminalBox(
             () => sumPoints(this._box.topLeft, point(1, 1)),
             () => sumPoints(this._box.bottomRight, point(-1, -1))
         ))
+    }
+
+    protected _createContent() {
+        const content = this._createContentRaw()
 
         content.on("verticalScrollChange", () => {
             this._scrolls.vertical.update(content.getPositionPercentY())
@@ -144,7 +148,7 @@ export class TerminalWindow {
         return this._frame
     }
 
-    getContent() {
+    getContent(): TerminalContentBox {
         return this._content
     }
 
