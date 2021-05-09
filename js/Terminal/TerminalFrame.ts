@@ -1,7 +1,7 @@
 import { point } from "./point";
 import { TerminalBox } from "./TerminalBox";
 import { TerminalContext } from "./TerminalContext";
-import { Theme, TThemeFrame } from "./Theme";
+import { TerminalTheme, TThemeFrame } from "./Theme";
 
 export class TerminalFrame {
     protected _selected = false
@@ -21,8 +21,8 @@ export class TerminalFrame {
         const cursor = TerminalContext
         const box = this._box
         const theme = this._selected 
-            ? Theme.frame.selected
-            : Theme.frame.blurred 
+            ? TerminalTheme.frame.selected
+            : TerminalTheme.frame.blurred 
 
         // frame colors
         cursor

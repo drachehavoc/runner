@@ -138,7 +138,7 @@ const scroll: TThemeScroll = {
     }
 }
 
-export const Theme: TTheme = {
+export const TerminalTheme: TTheme = {
     frame,
     scroll,
 }

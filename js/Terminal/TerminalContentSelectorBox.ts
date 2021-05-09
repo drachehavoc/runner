@@ -1,7 +1,7 @@
 import { point } from "./point"
 import { TerminalContentBox } from "./TerminalContentBox"
 import { TerminalContext } from "./TerminalContext"
-import { Theme } from "./Theme";
+import { TerminalTheme } from "./Theme";
 
 export class TerminalContentSelectorBox extends TerminalContentBox {
     protected _focusedLineIdx = 0
@@ -12,13 +12,20 @@ export class TerminalContentSelectorBox extends TerminalContentBox {
 
     protected _draw() {
         const ySize = this._box.size.y + 1
-        const xSize = this._box.size.x - 1
+        const xSize = this._box.size.x
         const xInit = this._position.x
+
         for (let linePos = ySize; linePos--;) {
             const lineIdx = linePos + this._position.y
-            const selected = this._selectedLineIdx == lineIdx ? "☒ " : "☐ "
-            const focused = this._focusedLineIdx === lineIdx ? Theme.frame.selected.color.border.foreground : "default"
-            const lineContent = (this._content[lineIdx]?.substr(xInit, xSize).padEnd(xSize, ' ') ?? ` `.repeat(xSize)) + selected
+            const focused = this._focusedLineIdx === lineIdx ? TerminalTheme.frame.selected.color.border.foreground : "default"    
+            let lineContent = this._content[lineIdx]
+            if (lineContent) {
+                const size = xSize - 1
+                const selected = this._selectedLineIdx == lineIdx ? "☒ " : "☐ "
+                lineContent = lineContent.substr(xInit, size).padEnd(size, ' ') + selected
+            } else {
+                lineContent = ` `.repeat(xSize)
+            }
             TerminalContext
                 .move(this._box.topLeft, point(0, linePos))
                 .background(focused)
@@ -27,7 +34,7 @@ export class TerminalContentSelectorBox extends TerminalContentBox {
         }
     }
 
-    add(content: string, callback?: Function) {
+    add(content: string, callback?: (lineIdx: number) => any) {
         if (!callback)
             throw new Error(`'${this.constructor.name}', precisa receber um callback.`)
 
@@ -68,7 +75,7 @@ export class TerminalContentSelectorBox extends TerminalContentBox {
 
     selectFosuedOption() {
         this._selectedLineIdx = this._focusedLineIdx
-        this._callbacks[this._selectedLineIdx]?.()
+        this._callbacks[this._selectedLineIdx]?.(this._selectedLineIdx)
         this._draw()
     }
 }

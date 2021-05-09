@@ -1,6 +1,6 @@
 import { point, sumPoints, TPoint } from "./point";
 import { TerminalContext } from "./TerminalContext";
-import { Theme } from "./Theme";
+import { TerminalTheme } from "./Theme";
 
 export class TerminalVerticalScroll {
     protected _bars = { clear: "│", normal: "┃", fixed: "║" }
@@ -49,7 +49,7 @@ export class TerminalVerticalScroll {
     }
 
     protected _getTheme() {
-        return this._selected ? Theme.scroll.selected : Theme.scroll.blurred
+        return this._selected ? TerminalTheme.scroll.selected : TerminalTheme.scroll.blurred
     }
 
     protected _draw() {

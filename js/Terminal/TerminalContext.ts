@@ -1,19 +1,23 @@
-import { EventsHandler } from "./EventsHandler"
+import readline from "readline"
+import { EventsHandler } from "../Util/EventsHandler"
 import { sumPoints, TPoint } from "./point"
 
+//
 export type colorSet = { [color: string]: [string, string] }
-
 export type TForegroundColors = keyof typeof colors.foreground
-
 export type TBackgroundColors = keyof typeof colors.background
 
+//
 const _events = new EventsHandler({
     clear: [] as Array<() => any>,
+    keypress: [] as Array<(key: readline.Key) => any>,
     resize: [] as Array<() => any>,
 })
 
+//
 const charEsc = '\x1b[';
 
+//
 const colors = {
     foreground: <colorSet>{
         /****/"default": ["39", "m"],
@@ -60,7 +64,13 @@ const colors = {
     }
 }
 
+//
 process.stdout.on('resize', () => _events.fire('resize'))
+
+//
+readline.emitKeypressEvents(process.stdin)
+process.stdin.setRawMode(true)
+process.stdin.on("keypress", (c, k) => _events.fire('keypress', k))
 
 export class TerminalContext {
 

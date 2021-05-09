@@ -1,4 +1,4 @@
-import { EventsHandler } from "./EventsHandler"
+import { EventsHandler } from "../Util/EventsHandler"
 import { point } from "./point"
 import { TerminalBox } from "./TerminalBox"
 import { TerminalContext } from "./TerminalContext"
@@ -34,6 +34,17 @@ export class TerminalContentBox {
         //
     }
 
+    protected _add(content: string) {
+        const lines = content.split(/\n/gm)
+        this._height += lines.length
+        lines.forEach(line => {
+            if (line.length > this._width)
+                this._width = line.length
+            this._content.push(line)
+        })
+        this._events.fire('addContent', this)
+    }
+
     protected _draw() {
         const ySize = this._box.size.y + 1
         const xSize = this._box.size.x + 1
@@ -66,14 +77,7 @@ export class TerminalContentBox {
     on = this._events.on.bind(this._events)
 
     add(content: string) {
-        const lines = content.split(/\n/gm)
-        this._height += lines.length
-        lines.forEach(line => {
-            if (line.length > this._width)
-                this._width = line.length
-            this._content.push(line)
-        })
-        this._events.fire('addContent', this)
+        this._add(content)
         this._draw()
     }
 

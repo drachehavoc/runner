@@ -1,6 +1,6 @@
 import { point, sumPoints, TPoint } from "./point";
 import { TerminalContext } from "./TerminalContext";
-import { EventsHandler } from "./EventsHandler";
+import { EventsHandler } from "../Util/EventsHandler";
 
 type TBoxPointStartFunctionUpdate = () => TPoint
 type TBoxPointEndFunctionUpdate = (startPoint: TPoint) => TPoint

@@ -4,7 +4,7 @@ import { TerminalContentBox } from "./TerminalContentBox";
 import { TerminalContext } from "./TerminalContext";
 import { TerminalFrame } from "./TerminalFrame";
 import { TerminalHorizontalScroll, TerminalVerticalScroll } from "./TerminalScrollbar";
-import { Theme } from "./Theme";
+import { TerminalTheme } from "./Theme";
 
 const TerminalWindowList: TerminalWindow[] = []
 
@@ -72,8 +72,8 @@ export class TerminalWindow {
 
     protected _getTheme() {
         return this._isSlected()
-            ? Theme.frame.selected
-            : Theme.frame.blurred
+            ? TerminalTheme.frame.selected
+            : TerminalTheme.frame.blurred
     }
 
     protected _createFrame() {
