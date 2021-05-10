@@ -9,7 +9,7 @@ class TerminalContentBoxF extends TerminalContentBox {
     delme = delme++
 
     constructor(
-        protected _window?: TerminalContentMultipleContentBox,
+        protected _window?: TerminalWindowMultipleContentBox,
         ...args: ConstructorParameters<typeof TerminalContentBox>
     ) {
         super(...args)
@@ -22,7 +22,7 @@ class TerminalContentBoxF extends TerminalContentBox {
     }
 }
 
-export class TerminalContentMultipleContentBox extends TerminalWindow {
+export class TerminalWindowMultipleContentBox extends TerminalWindow {
     protected _contents: TerminalContentBox[] = []
 
     protected _currentContent?: TerminalContentBoxF

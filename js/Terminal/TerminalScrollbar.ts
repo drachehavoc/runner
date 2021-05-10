@@ -39,7 +39,11 @@ export class TerminalVerticalScroll {
     }
 
     protected _clear() {
+        if (this._getSize() <= 0)
+            return
+
         const theme = this._getTheme()
+        
         TerminalContext
             .move(this._getCurrentPositionPoint())
             .color(theme.color.foreground)
@@ -53,6 +57,9 @@ export class TerminalVerticalScroll {
     }
 
     protected _draw() {
+        if (this._getSize() <= 0)
+            return
+
         if (!this._visible)
             return
 

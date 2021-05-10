@@ -161,9 +161,12 @@ export class TerminalWindow {
 
     update() {
         const frame = this.getFrame()
-        const content = this.getContent()
         frame.setSelected(this._isSlected())
         frame.update()
-        content.update()
+
+        try {
+            const content = this.getContent() ?? null
+            content.update()
+        } catch (e) { }
     }
 }

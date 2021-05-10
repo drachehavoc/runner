@@ -46,9 +46,13 @@ export class TerminalContentBox {
     }
 
     protected _draw() {
+        if (this._box.size.y <= 0 || this._box.size.x <= 0)
+            return
+
         const ySize = this._box.size.y + 1
         const xSize = this._box.size.x + 1
         const xInit = this._position.x
+
         for (let linePos = ySize; linePos--;) {
             const lineId = linePos + this._position.y
             const lineContent = this._content[lineId]?.substr(xInit, xSize).padEnd(xSize, ' ') ?? ` `.repeat(xSize)
@@ -63,7 +67,7 @@ export class TerminalContentBox {
     }
 
     getOverflowY() {
-        return this._height > this._box.size.y
+        return this._height - 1 > this._box.size.y
     }
 
     getPositionPercentX() {
@@ -121,6 +125,13 @@ export class TerminalContentBox {
             return
         }
         this._draw()
+    }
+
+    clear() {
+        this._width = 0
+        this._height = 0
+        this._content = []
+        this._position = { y: 0, x: 0 }
     }
 
     update() {

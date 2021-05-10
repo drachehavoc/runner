@@ -1,7 +1,7 @@
 import { point } from "./point";
 import { TerminalBox } from "./TerminalBox";
-import { TerminalContext } from "./TerminalContext";
-import { TerminalTheme, TThemeFrame } from "./Theme";
+import { TColorArray, TerminalContext } from "./TerminalContext";
+import { TerminalTheme } from "./Theme";
 
 export class TerminalFrame {
     protected _selected = false
@@ -18,68 +18,89 @@ export class TerminalFrame {
     }
 
     protected _drawFrame() {
+        // === constants =======================================================
+
         const cursor = TerminalContext
+
         const box = this._box
-        const theme = this._selected 
+
+        const theme = this._selected
             ? TerminalTheme.frame.selected
-            : TerminalTheme.frame.blurred 
+            : TerminalTheme.frame.blurred
 
-        // frame colors
+        const bar_cl: TColorArray = [
+            theme.color.border.foreground,
+            theme.color.border.background]
+
+        const title_cl: TColorArray = [
+            theme.color.title.foreground,
+            theme.color.title.background]
+
+        // == title ============================================================
+
+        const reticensesTitle = this._title.length > box.size.x - 3 ? '…' : ' '
+
+        const formatedTitle = ` ${this._title.substr(0, box.size.x - 3)}${reticensesTitle}`
+
+        // === top bar =========================================================
+
         cursor
-            .color(theme.color.border.foreground)
-            .background(theme.color.border.background)
-
-        // corners
-
-        cursor
+            // corner top left
+            .reset()
+            .color(...bar_cl)
             .move(box.topLeft)
             .write("┌")
 
-            .move(box.topRight)
+            // title
+            .reset()
+            .italic()
+            .color(...title_cl)
+            .write(formatedTitle)
+
+            // top bar
+            .reset()
+            .color(...bar_cl)
+            .write('─'.repeat(box.size.x - formatedTitle.length - 1))
+
+            // corner top right
+            .reset()
+            .color(...bar_cl)
             .write("┐")
 
+        //
+
+        if (box.size.y <= 0)
+            return
+
+        // === bottom bar ======================================================
+
+        cursor
+            // corner bottom left
+            .reset()
+            .color(...bar_cl)
             .move(box.bottomLeft)
             .write("└")
 
-            .move(box.bottomRight)
+            // bottom bar
+            .reset()
+            .color(...bar_cl)
+            .write('─'.repeat(box.size.x - 1))
+
+            // corner top right
+            .reset()
+            .color(...bar_cl)
             .write("┘")
 
-        // horizontal bars
 
-        const sizeX = box.size.x - 1
+        // === vertival bars ===================================================
 
-        const horizBar = '─'.repeat(sizeX >= 1 ? sizeX : 1);
-
-        cursor
-            .move(box.topLeft, point(1, 0))
-            .write(horizBar)
-            .move(box.bottomLeft, point(1, 0))
-            .write(horizBar)
-
-        // vertival bars
-
-        for (let top = box.size.y; top-- > 1;) {
-            cursor
-                .move(box.topLeft, point(0, top))
+        TerminalContext
+            .color(...bar_cl)
+            .repeat(box.size.y - 1, (cr, cnt) => cr
+                .move(box.topLeft, point(0, cnt + 1))
                 .write("│")
-                .move(box.topRight, point(0, top))
-                .write("│")
-        }
-
-        // title
-
-        const formatedTitle = this._title.substr(0, box.size.x - 3)
-
-        cursor
-            .move(box.topLeft, point(1, 0))
-            .italic()
-            .color(theme.color.title.foreground)
-            .background(theme.color.title.background)
-            .write(` ${formatedTitle}${formatedTitle != this._title ? '…' : ' '}`)
-            .reset();
-
-        // 
-        cursor
+                .move(box.topRight, point(0, cnt + 1))
+                .write("│"))
             .reset()
     }
 

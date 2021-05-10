@@ -3,8 +3,9 @@ import { EventsHandler } from "../Util/EventsHandler"
 import { sumPoints, TPoint } from "./point"
 
 //
-export type colorSet = { [color: string]: [string, string] }
 export type TForegroundColors = keyof typeof colors.foreground
+export type TEscColorSet = { [color: string]: [string, string] }
+export type TColorArray = [TForegroundColors, TBackgroundColors]
 export type TBackgroundColors = keyof typeof colors.background
 
 //
@@ -19,7 +20,7 @@ const charEsc = '\x1b[';
 
 //
 const colors = {
-    foreground: <colorSet>{
+    foreground: <TEscColorSet>{
         /****/"default": ["39", "m"],
         //
         /****/black: ["30", "m"],
@@ -41,7 +42,7 @@ const colors = {
         /****/"bright-white": ["97", "m"],
     },
 
-    background: <colorSet>{
+    background: <TEscColorSet>{
         /****/"default": ["49", "m"],
         //
         /****/black: ["40", "m"],
@@ -89,6 +90,18 @@ export class TerminalContext {
         return process.stdout.rows - 1
     }
 
+    static repeat(times: number, callback: (terminalContext: typeof TerminalContext,counter: number) => any) {
+        for (let i = 0; i < times; i++)
+            callback(TerminalContext, i)
+        return TerminalContext
+    }
+
+    static walk(...points: [TPoint, ...TPoint[]]) {
+        const pos = sumPoints(...points)
+        process.stdout.moveCursor(pos.x, pos.y)
+        return TerminalContext
+    }
+
     static move(...points: [TPoint, ...TPoint[]]) {
         const pos = sumPoints(...points)
         process.stdout.cursorTo(pos.x, pos.y)
@@ -99,33 +112,41 @@ export class TerminalContext {
         process.stdout.write(content)
         return TerminalContext
     }
-    
+
     static clear() {
         TerminalContext.escCode("2", "J")
         _events.fire('clear')
     }
 
     static hide() {
-        return TerminalContext.escCode("?25", "l")
+        TerminalContext.escCode("?25", "l")
+        return TerminalContext
     }
 
     static unhide() {
-        return TerminalContext.escCode("?25", "h")
+        TerminalContext.escCode("?25", "h")
+        return TerminalContext
     }
 
-    static color(color: TForegroundColors) {
-        return TerminalContext.escCode(...colors.foreground[color])
+    static color(color: TForegroundColors, backgroundColor?: TBackgroundColors) {
+        TerminalContext.escCode(...colors.foreground[color])
+        if (backgroundColor)
+            this.background(backgroundColor)
+        return TerminalContext
     }
 
     static background(color: TBackgroundColors) {
-        return TerminalContext.escCode(...colors.background[color])
+        TerminalContext.escCode(...colors.background[color])
+        return TerminalContext
     }
 
     static italic() {
-        return TerminalContext.escCode("3", "m")
+        TerminalContext.escCode("3", "m")
+        return TerminalContext
     }
 
     static reset() {
-        return TerminalContext.escCode("0", "m")
+        TerminalContext.escCode("0", "m")
+        return TerminalContext
     }
 }
