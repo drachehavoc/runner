@@ -8,6 +8,7 @@ import { spawn } from "child_process"
 import pidusage from "pidusage"
 import prettyMilliseconds from "pretty-ms"
 import prettyBytes from "pretty-bytes"
+import { Stream } from "stream"
 
 // =============================================================================
 
@@ -48,9 +49,16 @@ function createItemProcess(title: string, command: string, ...options: string[])
 
     const infos = async () => {
         winProcessContent.clear()
+
+        if (!proc) {
+            winProcessContent.add(``)
+            winProcessContent.add(` NO PROCESS FOUND!`)
+            return
+        }
+
         pidusage(proc.pid, (err, stats) => {
             if (err)
-                winProcessContent.add(`STATS ERROR: ${err}`)
+                return winProcessContent.add(`STATS ERROR: ${err}`)
 
             winProcessContent.add(`       pid: ${proc.pid}`)
             winProcessContent.add(`      ppid: ${stats.ppid}`)
@@ -67,7 +75,6 @@ function createItemProcess(title: string, command: string, ...options: string[])
         winProcessInformation.selectContentBox(winProcessContent)
     })
 
-
     proc.stdout.on('data', data => {
         winLogContent.add(data.toString().replace(/\r*\n$/, ""))
     })
@@ -81,6 +88,4 @@ function createItemProcess(title: string, command: string, ...options: string[])
     })
 }
 
-createItemProcess("Ping Google", "ping", "www.google.com")
-createItemProcess("Ping Facebook", "ping", "www.facebook.com")
-createItemProcess("Ping UOL", "ping", "www.uol.com.br")
+export { createItemProcess }

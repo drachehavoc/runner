@@ -34,14 +34,45 @@ export class TerminalContentBox {
         //
     }
 
+    protected _threatLine(lineContent: string) {
+        let scape
+
+        // TRATA ESCAPES DE CLEAR SCREEN
+        // @TO-DO: limpar linha a esquerda e limpar linha a direita, precisam 
+        //         serem tratados separadamente, da forma em que esta, um 
+        //         simple limpar linha, limpa a tela toda.
+        if (
+            lineContent.includes(scape = '\x1bc') ||
+            lineContent.includes(scape = '\x1b[0J') ||
+            lineContent.includes(scape = '\x1b[1J') ||
+            lineContent.includes(scape = '\x1b[2J') ||
+            lineContent.includes(scape = '\x1b[3J')
+        ) {
+            this.clear()
+            lineContent = lineContent.substr(lineContent.lastIndexOf(scape) + scape.length)
+            if (lineContent.trim() == "") return
+            this._threatLine(lineContent)
+            return
+        }
+
+        // REMOVE SCAPES AINDA NÃO TRATADOS
+        // @TO-DO: isto esta aqui para evitar outros escapes que ainda não foram
+        //         tratados, a ideia é que um dia todos sejam tratados e assim
+        //         esta linha será removida
+        lineContent = lineContent.replace('\x1b', "[ESC]")
+
+        //
+        if (lineContent.length > this._width)
+            this._width = lineContent.length
+
+        //
+        this._content.push(lineContent)
+    }
+
     protected _add(content: string) {
         const lines = content.split(/\n/gm)
         this._height += lines.length
-        lines.forEach(line => {
-            if (line.length > this._width)
-                this._width = line.length
-            this._content.push(line)
-        })
+        lines.forEach(l => this._threatLine(l))
         this._events.fire('addContent', this)
     }
 
@@ -131,7 +162,7 @@ export class TerminalContentBox {
         this._width = 0
         this._height = 0
         this._content = []
-        this._position = { y: 0, x: 0 }
+        // this._position = { y: 0, x: 0 }
     }
 
     update() {

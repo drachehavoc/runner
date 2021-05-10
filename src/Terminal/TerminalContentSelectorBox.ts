@@ -20,8 +20,9 @@ export class TerminalContentSelectorBox extends TerminalContentBox {
             const focused = this._focusedLineIdx === lineIdx ? TerminalTheme.frame.selected.color.border.foreground : "default"    
             let lineContent = this._content[lineIdx]
             if (lineContent) {
-                const size = xSize - 1
-                const selected = this._selectedLineIdx == lineIdx ? "☒ " : "☐ "
+                // const selected = this._selectedLineIdx == lineIdx ? " ᐳ " : ""
+                const selected = this._selectedLineIdx == lineIdx ? " ❯ " : ""
+                const size = xSize - selected.length + 1
                 lineContent = lineContent.substr(xInit, size).padEnd(size, ' ') + selected
             } else {
                 lineContent = ` `.repeat(xSize)
