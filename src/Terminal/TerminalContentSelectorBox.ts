@@ -12,7 +12,7 @@ export class TerminalContentSelectorBox extends TerminalContentBox {
 
     protected _draw() {
         const ySize = this._box.size.y + 1
-        const xSize = this._box.size.x
+        const xSize = this._box.size.x + 1
         const xInit = this._position.x
 
         for (let linePos = ySize; linePos--;) {
@@ -22,7 +22,7 @@ export class TerminalContentSelectorBox extends TerminalContentBox {
             if (lineContent) {
                 // const selected = this._selectedLineIdx == lineIdx ? " ᐳ " : ""
                 const selected = this._selectedLineIdx == lineIdx ? " ❯ " : ""
-                const size = xSize - selected.length + 1
+                const size = xSize - selected.length
                 lineContent = lineContent.substr(xInit, size).padEnd(size, ' ') + selected
             } else {
                 lineContent = ` `.repeat(xSize)

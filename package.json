@@ -1,14 +1,20 @@
 {
-  "name": "runner",
-  "version": "1.0.0",
+  "name": "luminol.runner",
+  "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "ts-node-script ./src/test.ts"
+    "dev": "ts-node-script ./src/test.ts",
+    "build": "tsc",
+    "pub": "npm run build; npm publish --access public"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "taks",
+    "task runner"
+  ],
+  "author": "Daniel de Andrade Varela",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^15.0.0",
