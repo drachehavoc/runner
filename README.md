@@ -44,4 +44,4 @@
         - [ ] **ESC[7m**: _set inverse/reverse mode_
         - [ ] **ESC[8m**: _set invisible mode_
         - [ ] **ESC[9m**: _set strikethrough mode._
-    - Reference: _[ANSI Escape Sequences](https://gist.github.com/fnky/_458719343aabd01cfb17a3a4f7296797)
+    - Reference: [ANSI Escape Sequences](https://gist.github.com/fnky/_458719343aabd01cfb17a3a4f7296797)
