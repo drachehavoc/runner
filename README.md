@@ -1,6 +1,6 @@
 # Luminol Runner
 
-...
+ ![screenshot of luminol.runner](doc/readme/Screenshot-001.png)
 
 # Know Issues
 
